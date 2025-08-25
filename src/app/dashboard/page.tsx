@@ -30,10 +30,17 @@ import NotificationsMenu from "@/components/NotificationsMenu";
 import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
 
+type Task = {
+  id: string;
+  title: string;
+  description?: string;
+  completed?: boolean;
+};
+
 export default function Dashboard() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isTimerRunning, setIsTimerRunning] = useState(false);
-  const [currentTask, setCurrentTask] = useState(null);
+  const [currentTask, setCurrentTask] = useState<Task | null>(null);
   const { user, logout } = useAuth();
 
   useEffect(() => {
@@ -229,7 +236,7 @@ export default function Dashboard() {
             >
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold text-gray-900">
-                  Today's Tasks
+                  Today&lsquo;s Tasks
                 </h2>
                 <button className="bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700 transition-colors">
                   <Plus className="h-4 w-4" />
@@ -279,8 +286,8 @@ export default function Dashboard() {
                     </span>
                   </div>
                   <p className="text-sm text-green-700">
-                    You've completed 3 tasks today. Your focus sessions are 15%
-                    longer than last week.
+                    You&lsquo;ve completed 3 tasks today. Your focus sessions
+                    are 15% longer than last week.
                   </p>
                 </div>
 
@@ -308,7 +315,7 @@ export default function Dashboard() {
             >
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold text-gray-900">
-                  Today's Stats
+                  Today&lsquo;s Stats
                 </h2>
                 <TrendingUp className="h-5 w-5 text-indigo-600" />
               </div>

@@ -24,9 +24,9 @@ const registerSchema = z
     email: z.string().email("Please enter a valid email address"),
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string(),
-    role: z.enum(["user", "doctor", "parent"], {
-      required_error: "Please select a role",
-    }),
+    role: z
+      .enum(["user", "doctor", "parent"])
+      .refine((val) => !!val, { message: "Please select a role" }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
