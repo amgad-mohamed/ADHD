@@ -12,22 +12,40 @@ import {
   Target,
   Zap,
   Award,
-  Clock,
-  Users,
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { rewardsAPI, Reward, Task } from "@/lib/rewards";
 import toast from "react-hot-toast";
 
+interface User {
+  streak_days: number;
+  level: number;
+}
+
+interface ExtendedTask extends Task {
+  status: string;
+  completion_date?: string;
+}
+
+interface WalletTransaction {
+  id: number;
+  type: "earn" | "spend" | "bonus";
+  description: string;
+  amount: number;
+  date: string;
+}
+
+interface WalletData {
+  transactions: WalletTransaction[];
+}
+
 export default function RewardsPage() {
   const [rewards, setRewards] = useState<Reward[]>([]);
-  const [tasks, setTasks] = useState<
-    (Task & { status: string; completion_date?: string })[]
-  >([]);
+  const [tasks, setTasks] = useState<ExtendedTask[]>([]);
   const [userBalance, setUserBalance] = useState<number>(0);
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const [redeemingId, setRedeemingId] = useState<number | null>(null);
   const [completingTaskId, setCompletingTaskId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<"rewards" | "tasks" | "wallet">(
@@ -65,7 +83,6 @@ export default function RewardsPage() {
       toast.success(
         `${res.message} (Spent ${res.tokens_spent} tokens, New balance: ${res.new_balance})`
       );
-      // Reload data to update rewards list
       loadData();
     } else {
       toast.error(res.message);
@@ -84,7 +101,6 @@ export default function RewardsPage() {
           res.streak_bonus ? ` +${res.streak_bonus} streak bonus!` : ""
         }`
       );
-      // Reload tasks to update status
       const tasksData = await rewardsAPI.getUserTasks();
       setTasks(tasksData.tasks);
     } else {
@@ -92,7 +108,7 @@ export default function RewardsPage() {
     }
   };
 
-  const getDifficultyColor = (difficulty: string) => {
+  const getDifficultyColor = (difficulty: string): string => {
     switch (difficulty) {
       case "easy":
         return "text-green-600 bg-green-100";
@@ -104,7 +120,6 @@ export default function RewardsPage() {
         return "text-gray-600 bg-gray-100";
     }
   };
-
   const getCategoryIcon = (category: string) => {
     switch (category) {
       case "discount":
@@ -130,7 +145,6 @@ export default function RewardsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
@@ -151,7 +165,6 @@ export default function RewardsPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* User Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-white border rounded-xl p-4">
             <div className="flex items-center justify-between">
@@ -203,7 +216,6 @@ export default function RewardsPage() {
           </div>
         </div>
 
-        {/* Tabs */}
         <div className="bg-white border rounded-xl p-1 mb-8">
           <div className="flex space-x-1">
             {[
@@ -213,7 +225,9 @@ export default function RewardsPage() {
             ].map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() =>
+                  setActiveTab(tab.id as "rewards" | "tasks" | "wallet")
+                }
                 className={`flex-1 flex items-center justify-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   activeTab === tab.id
                     ? "bg-indigo-600 text-white"
@@ -227,7 +241,6 @@ export default function RewardsPage() {
           </div>
         </div>
 
-        {/* Content */}
         <AnimatePresence mode="wait">
           {activeTab === "rewards" && (
             <motion.div
@@ -393,10 +406,9 @@ export default function RewardsPage() {
   );
 }
 
-// Wallet History Component
 function WalletHistory() {
-  const [walletData, setWalletData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [walletData, setWalletData] = useState<WalletData | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     loadWalletData();
@@ -434,7 +446,7 @@ function WalletHistory() {
     }
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string): string => {
     return new Date(dateString).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
@@ -457,7 +469,7 @@ function WalletHistory() {
           </div>
         ) : (
           <div className="space-y-3">
-            {walletData.transactions.map((transaction: any) => (
+            {walletData.transactions.map((transaction) => (
               <div
                 key={transaction.id}
                 className="flex items-center justify-between p-4 border rounded-lg"
