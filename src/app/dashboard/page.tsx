@@ -27,6 +27,7 @@ import ProgressChart from "@/components/ProgressChart";
 import QuickActions from "@/components/QuickActions";
 import FloatingQuickActions from "@/components/FloatingQuickActions";
 import NotificationsMenu from "@/components/NotificationsMenu";
+import MusicPractice from "@/components/MusicPractice";
 import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
 
@@ -337,6 +338,16 @@ export default function Dashboard() {
                   <div className="text-sm text-gray-600">Sessions</div>
                 </div>
               </div>
+            </motion.div>
+
+            {/* Listening Practice */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              className=""
+            >
+              <MusicPractice />
             </motion.div>
           </div>
         </div>
