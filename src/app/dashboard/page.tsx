@@ -20,6 +20,7 @@ import {
   BarChart3,
   LogOut,
   Search,
+  Gift,
 } from "lucide-react";
 import FocusTimer from "@/components/FocusTimer";
 import TaskList from "@/components/TaskList";
@@ -116,6 +117,14 @@ export default function Dashboard() {
               >
                 <Search className="h-4 w-4 mr-2" />
                 Find Doctors
+              </Link>
+
+              <Link
+                href="/rewards"
+                className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+              >
+                <Gift className="h-4 w-4 mr-2" />
+                Rewards & Tasks
               </Link>
 
               <NotificationsMenu />
